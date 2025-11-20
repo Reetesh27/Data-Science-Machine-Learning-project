@@ -32,25 +32,7 @@ def create_sample_data():
 def load_data():
     """Try multiple methods to load the CSV file"""
     st.info("🔄 Attempting to load your Netflix CSV file...")
-    
-    # Method 1: Standard CSV reading
-    try:
-        st.write("📁 Trying standard CSV read...")
-        df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv')
-        st.success("✅ CSV loaded successfully with standard method!")
-        return df
-    except Exception as e:
-        st.warning(f"❌ Standard method failed: {str(e)[:100]}...")
-    
-    # Method 2: Try different encoding
-    try:
-        st.write("🔧 Trying with latin-1 encoding...")
-        df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv', encoding='latin-1')
-        st.success("✅ CSV loaded successfully with latin-1 encoding!")
-        return df
-    except Exception as e:
-        st.warning(f"❌ Latin-1 encoding failed: {str(e)[:100]}...")
-    
+
     # Method 3: Try with error handling for bad lines
     try:
         st.write("🛠️ Trying with error handling...")
@@ -131,7 +113,7 @@ def load_data():
 
 def clean_data(df):
     clean_df = df.copy()
-    clean_df['country'] = clean_df['country'].fillna('Unknown')
+    
     clean_df['cast'] = clean_df['cast'].fillna('No cast information')
     clean_df['director'] = clean_df['director'].fillna('No director information')
     clean_df['year_added'] = pd.to_datetime(clean_df['date_added'], errors='coerce').dt.year
@@ -246,6 +228,7 @@ st.dataframe(filtered_df[['title', 'type', 'country', 'release_year', 'rating']]
 st.markdown("---")
 
 st.markdown("Built with ❤️ using Streamlit | Data Source: Kaggle Netflix Dataset")
+
 
 
 
