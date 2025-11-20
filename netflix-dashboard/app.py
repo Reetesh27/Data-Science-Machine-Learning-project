@@ -36,7 +36,7 @@ def load_data():
     # Method 3: Try with error handling for bad lines
     try:
         st.write("🛠️ Trying with error handling...")
-        df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv', on_bad_lines='skip', encoding='latin-1')
+        df = pd.read_csv('https://raw.githubusercontent.com/Reetesh27/Data-Science-Machine-Learning-project/main/netflix-dashboard/netflix_titles.csv', on_bad_lines='skip', encoding='latin-1')
         st.success("✅ CSV loaded successfully with error handling!")
         return df
     except Exception as e:
@@ -113,12 +113,22 @@ def load_data():
 
 def clean_data(df):
     clean_df = df.copy()
-    clean_df['country'] = clean_df['country'].fillna('Unknown')
-    clean_df['cast'] = clean_df['cast'].fillna('No cast information')
-    clean_df['director'] = clean_df['director'].fillna('No director information')
-    clean_df['year_added'] = pd.to_datetime(clean_df['date_added'], errors='coerce').dt.year
+
+    for col in ['country', 'cast', 'director']:
+        if col not in clean_df.columns:
+            clean_df[col] = 'Unknown'  # prevent KeyError
+        else:
+            clean_df[col] = clean_df[col].fillna('Unknown')
+
+    if 'date_added' in clean_df.columns:
+        clean_df['year_added'] = pd.to_datetime(clean_df['date_added'], errors='coerce').dt.year
+    else:
+        clean_df['year_added'] = clean_df['release_year']
+
     clean_df['year_added'] = clean_df['year_added'].fillna(clean_df['release_year'])
+
     return clean_df
+
 
 df = load_data()
 df_clean = clean_data(df)
@@ -228,6 +238,7 @@ st.dataframe(filtered_df[['title', 'type', 'country', 'release_year', 'rating']]
 st.markdown("---")
 
 st.markdown("Built with ❤️ using Streamlit | Data Source: Kaggle Netflix Dataset")
+
 
 
 
