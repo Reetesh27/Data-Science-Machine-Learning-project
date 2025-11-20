@@ -36,7 +36,7 @@ def load_data():
     # Method 1: Standard CSV reading
     try:
         st.write("📁 Trying standard CSV read...")
-        df = pd.read_csv('netflix_titles.csv')
+        df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv')
         st.success("✅ CSV loaded successfully with standard method!")
         return df
     except Exception as e:
@@ -45,7 +45,7 @@ def load_data():
     # Method 2: Try different encoding
     try:
         st.write("🔧 Trying with latin-1 encoding...")
-        df = pd.read_csv('netflix_titles.csv', encoding='latin-1')
+        df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv', encoding='latin-1')
         st.success("✅ CSV loaded successfully with latin-1 encoding!")
         return df
     except Exception as e:
@@ -54,7 +54,7 @@ def load_data():
     # Method 3: Try with error handling for bad lines
     try:
         st.write("🛠️ Trying with error handling...")
-        df = pd.read_csv('netflix_titles.csv', on_bad_lines='skip', encoding='latin-1')
+        df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv', on_bad_lines='skip', encoding='latin-1')
         st.success("✅ CSV loaded successfully with error handling!")
         return df
     except Exception as e:
@@ -63,7 +63,7 @@ def load_data():
     # Method 4: Manual CSV parsing to handle problematic lines
     try:
         st.write("🔍 Trying manual CSV parsing...")
-        with open('netflix_titles.csv', 'r', encoding='utf-8') as f:
+        with open('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv', 'r', encoding='utf-8') as f:
             lines = f.readlines()
         
         if len(lines) == 0:
@@ -111,7 +111,7 @@ def load_data():
         st.write("🐍 Trying with Python's csv module...")
         import csv
         
-        with open('netflix_titles.csv', 'r', encoding='utf-8') as f:
+        with open('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv', 'r', encoding='utf-8') as f:
             csv_reader = csv.reader(f)
             data = list(csv_reader)
         
@@ -246,5 +246,6 @@ st.dataframe(filtered_df[['title', 'type', 'country', 'release_year', 'rating']]
 st.markdown("---")
 
 st.markdown("Built with ❤️ using Streamlit | Data Source: Kaggle Netflix Dataset")
+
 
 
