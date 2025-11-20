@@ -13,7 +13,7 @@ st.markdown("Analyzing Netflix's movie and TV show collection")
 # Load and clean data (using our previous functions)
 @st.cache_data
 def load_data():
-    df = pd.read_csv('netflix_titles.csv')
+    df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv')
     return df
 
 def clean_data(df):
@@ -131,4 +131,5 @@ st.dataframe(filtered_df[['title', 'type', 'country', 'release_year', 'rating']]
 
 # Footer
 st.markdown("---")
+
 st.markdown("Built with ❤️ using Streamlit | Data Source: Kaggle Netflix Dataset")
