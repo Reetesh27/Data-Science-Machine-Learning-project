@@ -11,17 +11,123 @@ st.title("🎬 Netflix Content Analysis Dashboard")
 st.markdown("Analyzing Netflix's movie and TV show collection")
 
 # Load and clean data (using our previous functions)
+
+
+def create_sample_data():
+    """Create sample data as fallback"""
+    st.warning("⚠️ Using sample data because CSV file couldn't be loaded")
+    sample_data = {
+        'show_id': [f's{i}' for i in range(1, 21)],
+        'type': ['Movie'] * 10 + ['TV Show'] * 10,
+        'title': [f'Movie {i}' for i in range(1, 11)] + [f'TV Show {i}' for i in range(1, 11)],
+        'country': ['United States'] * 8 + ['United Kingdom'] * 5 + ['India'] * 4 + ['Canada'] * 3,
+        'release_year': [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022] * 3,
+        'rating': ['TV-MA', 'TV-14', 'PG-13', 'R', 'PG'] * 4,
+        'duration': ['120 min', '110 min', '95 min', '130 min'] * 5,
+        'listed_in': ['Dramas', 'Comedies', 'Thrillers', 'Action'] * 5,
+    }
+    return pd.DataFrame(sample_data)
+
+@st.cache_data
 def load_data():
+    """Try multiple methods to load the CSV file"""
+    st.info("🔄 Attempting to load your Netflix CSV file...")
+    
+    # Method 1: Standard CSV reading
     try:
-        # Use a known good Netflix dataset from GitHub
-        url = "https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv"
-        df = pd.read_csv(url)
-        st.success("✅ Data loaded from reliable source!")
+        st.write("📁 Trying standard CSV read...")
+        df = pd.read_csv('netflix_titles.csv')
+        st.success("✅ CSV loaded successfully with standard method!")
         return df
     except Exception as e:
-        st.error(f"❌ Failed to load from URL: {e}")
-        st.info("🔄 Creating sample data...")
-        return create_sample_data()
+        st.warning(f"❌ Standard method failed: {str(e)[:100]}...")
+    
+    # Method 2: Try different encoding
+    try:
+        st.write("🔧 Trying with latin-1 encoding...")
+        df = pd.read_csv('netflix_titles.csv', encoding='latin-1')
+        st.success("✅ CSV loaded successfully with latin-1 encoding!")
+        return df
+    except Exception as e:
+        st.warning(f"❌ Latin-1 encoding failed: {str(e)[:100]}...")
+    
+    # Method 3: Try with error handling for bad lines
+    try:
+        st.write("🛠️ Trying with error handling...")
+        df = pd.read_csv('netflix_titles.csv', on_bad_lines='skip', encoding='latin-1')
+        st.success("✅ CSV loaded successfully with error handling!")
+        return df
+    except Exception as e:
+        st.warning(f"❌ Error handling method failed: {str(e)[:100]}...")
+    
+    # Method 4: Manual CSV parsing to handle problematic lines
+    try:
+        st.write("🔍 Trying manual CSV parsing...")
+        with open('netflix_titles.csv', 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        
+        if len(lines) == 0:
+            st.error("❌ CSV file is empty")
+            return create_sample_data()
+        
+        # Get headers
+        headers = lines[0].strip().split(',')
+        data = []
+        skipped_lines = []
+        
+        # Process each line
+        for i, line in enumerate(lines[1:], 1):
+            line = line.strip()
+            if not line:
+                continue
+                
+            # Count commas to check if line has right number of fields
+            comma_count = line.count(',')
+            if comma_count == len(headers) - 1:
+                # Line has correct number of fields
+                values = line.split(',')
+                data.append(values)
+            else:
+                # Problematic line - skip it
+                skipped_lines.append(i + 1)
+                continue
+        
+        if skipped_lines:
+            st.warning(f"⚠️ Skipped {len(skipped_lines)} problematic lines: {skipped_lines[:5]}...")
+        
+        if data:
+            df = pd.DataFrame(data, columns=headers)
+            st.success(f"✅ Manual parsing successful! Loaded {len(df)} records")
+            return df
+        else:
+            st.error("❌ No valid data could be parsed from CSV")
+            return create_sample_data()
+            
+    except Exception as e:
+        st.error(f"❌ Manual parsing failed: {str(e)[:100]}...")
+    
+    # Method 5: Try reading with Python's csv module
+    try:
+        st.write("🐍 Trying with Python's csv module...")
+        import csv
+        
+        with open('netflix_titles.csv', 'r', encoding='utf-8') as f:
+            csv_reader = csv.reader(f)
+            data = list(csv_reader)
+        
+        if len(data) > 1:
+            headers = data[0]
+            # Filter out rows with different number of columns
+            valid_data = [row for row in data[1:] if len(row) == len(headers)]
+            df = pd.DataFrame(valid_data, columns=headers)
+            st.success(f"✅ CSV module successful! Loaded {len(df)} records")
+            return df
+    except Exception as e:
+        st.error(f"❌ CSV module failed: {str(e)[:100]}...")
+    
+    # Final fallback
+    st.error("❌ All CSV loading methods failed. Using sample data.")
+    return create_sample_data()
 
 def clean_data(df):
     clean_df = df.copy()
@@ -140,4 +246,5 @@ st.dataframe(filtered_df[['title', 'type', 'country', 'release_year', 'rating']]
 st.markdown("---")
 
 st.markdown("Built with ❤️ using Streamlit | Data Source: Kaggle Netflix Dataset")
+
 
