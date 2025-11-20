@@ -113,7 +113,7 @@ def load_data():
 
 def clean_data(df):
     clean_df = df.copy()
-    
+    clean_df['country'] = clean_df['country'].fillna('Unknown')
     clean_df['cast'] = clean_df['cast'].fillna('No cast information')
     clean_df['director'] = clean_df['director'].fillna('No director information')
     clean_df['year_added'] = pd.to_datetime(clean_df['date_added'], errors='coerce').dt.year
@@ -228,6 +228,7 @@ st.dataframe(filtered_df[['title', 'type', 'country', 'release_year', 'rating']]
 st.markdown("---")
 
 st.markdown("Built with ❤️ using Streamlit | Data Source: Kaggle Netflix Dataset")
+
 
 
 
