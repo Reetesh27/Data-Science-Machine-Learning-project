@@ -11,10 +11,17 @@ st.title("🎬 Netflix Content Analysis Dashboard")
 st.markdown("Analyzing Netflix's movie and TV show collection")
 
 # Load and clean data (using our previous functions)
-@st.cache_data
 def load_data():
-    df = pd.read_csv('https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv')
-    return df
+    try:
+        # Use a known good Netflix dataset from GitHub
+        url = "https://github.com/Reetesh27/Data-Science-Machine-Learning-project/blob/main/netflix-dashboard/netflix_titles.csv"
+        df = pd.read_csv(url)
+        st.success("✅ Data loaded from reliable source!")
+        return df
+    except Exception as e:
+        st.error(f"❌ Failed to load from URL: {e}")
+        st.info("🔄 Creating sample data...")
+        return create_sample_data()
 
 def clean_data(df):
     clean_df = df.copy()
@@ -133,3 +140,4 @@ st.dataframe(filtered_df[['title', 'type', 'country', 'release_year', 'rating']]
 st.markdown("---")
 
 st.markdown("Built with ❤️ using Streamlit | Data Source: Kaggle Netflix Dataset")
+
